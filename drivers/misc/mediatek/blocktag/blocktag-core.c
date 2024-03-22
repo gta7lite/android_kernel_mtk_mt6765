@@ -510,28 +510,6 @@ out:
 	rcu_read_unlock();
 }
 
-int mtk_btag_pidlog_get_mode(struct page *p)
-{
-	unsigned long idx;
-	short mode;
-	struct page_pid_logger *ppl;
-	struct page_pid_logger *pagelogger;
-
-	idx = mtk_btag_pidlog_index(p);
-	if (idx >= mtk_btag_pidlog_max_entry())
-		return -1;
-	rcu_read_lock();
-	pagelogger = rcu_dereference(mtk_btag_pagelogger);
-	if (unlikely(!pagelogger)) {
-		rcu_read_unlock();
-		return -1;
-	}
-	ppl = mtk_btag_pidlog_entry(pagelogger, idx);
-	mode = ppl->mode;
-	rcu_read_unlock();
-	return mode;
-}
-
 void mtk_btag_pidlog_copy_pid(struct page *src, struct page *dst)
 {
 	struct page_pid_logger *ppl_src, *ppl_dst, *pagelogger;
@@ -1667,9 +1645,7 @@ int mtk_btag_mictx_get_data(
 				comp = min_t(int, comp, ctx->top_r_pages);
 				ctx->top_r_pages -= comp;
 				ctx->req.r.size_top += comp;
-			}
-
-			if (ctx->top_r_pages < 0)
+			} else
 				ctx->top_r_pages = 0;
 		}
 
@@ -1681,9 +1657,7 @@ int mtk_btag_mictx_get_data(
 				comp = min_t(int, comp, ctx->top_w_pages);
 				ctx->top_w_pages -= comp;
 				ctx->req.w.size_top += comp;
-			}
-
-			if (ctx->top_w_pages < 0)
+			} else
 				ctx->top_w_pages = 0;
 		}
 

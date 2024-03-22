@@ -21,7 +21,7 @@ ccflags-y += -DCMDQ_MDP_ENABLE_SPR
 endif
 
 ifneq ($(filter mt6785,$(shell echo $(MTK_PLATFORM)|tr A-Z a-z)),)
-ccflags-y += -DPMQOS_VERSION2
+#ccflags-y += -DPMQOS_VERSION2
 ccflags-y += -DMDP_MMPATH
 ccflags-y += -DCMDQ_MDP_ENABLE_SPR
 ifeq ($(CONFIG_MTK_DEVAPC),y)
@@ -73,6 +73,10 @@ endif
 
 ifeq ($(CONFIG_MICROTRUST_TEE_SUPPORT),y)
 include $(srctree)/drivers/tee/teei/Makefile.include
+endif
+
+ifeq ($(CONFIG_TEEGRIS_TEE_SUPPORT),y)
+include $(srctree)/drivers/tee/tzdev/Makefile.include
 endif
 
 ccflags-y += -I$(srctree)/drivers/misc/mediatek/cmdq/v3/inc/cmdq_sec_dr \
